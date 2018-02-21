@@ -19,14 +19,14 @@ describe Instagram::Client do
 
           it "should get the correct resource" do
             @client.user(4)
-            a_get("users/4.#{format}").
-              with(:query => {:access_token => @client.access_token}).
-              should have_been_made
+            expect(a_get("users/4.#{format}").
+              with(:query => {:access_token => @client.access_token})).
+              to have_been_made
           end
 
           it "should return extended information of a given user" do
             user = @client.user(4)
-            user.full_name.should == "Mike Krieger"
+            expect(user.full_name).to eq("Mike Krieger")
           end
 
         end
@@ -41,9 +41,9 @@ describe Instagram::Client do
 
           it "should get the correct resource" do
             @client.user()
-            a_get("users/self.#{format}").
-              with(:query => {:access_token => @client.access_token}).
-              should have_been_made
+            expect(a_get("users/self.#{format}").
+              with(:query => {:access_token => @client.access_token})).
+              to have_been_made
           end
         end
       end
@@ -59,16 +59,16 @@ describe Instagram::Client do
 
         it "should get the correct resource" do
           @client.user_search("Shayne Sweeney")
-          a_get("users/search.#{format}").
+          expect(a_get("users/search.#{format}").
             with(:query => {:access_token => @client.access_token}).
-            with(:query => {:q => "Shayne Sweeney"}).
-            should have_been_made
+            with(:query => {:q => "Shayne Sweeney"})).
+            to have_been_made
         end
 
         it "should return an array of user search results" do
           users = @client.user_search("Shayne Sweeney")
-          users.should be_a Array
-          users.first.username.should == "shayne"
+          expect(users).to be_a Array
+          expect(users.first.username).to eq("shayne")
         end
       end
 
@@ -84,15 +84,15 @@ describe Instagram::Client do
 
           it "should get the correct resource" do
             @client.user_follows(4)
-            a_get("users/4/follows.#{format}").
-              with(:query => {:access_token => @client.access_token}).
-              should have_been_made
+            expect(a_get("users/4/follows.#{format}").
+              with(:query => {:access_token => @client.access_token})).
+              to have_been_made
           end
 
           it "should return a list of users whom a given user follows" do
             follows = @client.user_follows(4)
-            follows.should be_a Array
-            follows.first.username.should == "heartsf"
+            expect(follows).to be_a Array
+            expect(follows.first.username).to eq("heartsf")
           end
         end
 
@@ -106,9 +106,9 @@ describe Instagram::Client do
 
           it "should get the correct resource" do
             @client.user_follows
-            a_get("users/self/follows.#{format}").
-              with(:query => {:access_token => @client.access_token}).
-              should have_been_made
+            expect(a_get("users/self/follows.#{format}").
+              with(:query => {:access_token => @client.access_token})).
+              to have_been_made
           end
         end
       end
@@ -125,15 +125,15 @@ describe Instagram::Client do
 
           it "should get the correct resource" do
             @client.user_followed_by(4)
-            a_get("users/4/followed-by.#{format}").
-              with(:query => {:access_token => @client.access_token}).
-              should have_been_made
+            expect(a_get("users/4/followed-by.#{format}").
+              with(:query => {:access_token => @client.access_token})).
+              to have_been_made
           end
 
           it "should return a list of users whom a given user is followed by" do
             followed_by = @client.user_followed_by(4)
-            followed_by.should be_a Array
-            followed_by.first.username.should == "bojieyang"
+            expect(followed_by).to be_a Array
+            expect(followed_by.first.username).to eq("bojieyang")
           end
         end
 
@@ -147,9 +147,9 @@ describe Instagram::Client do
 
           it "should get the correct resource" do
             @client.user_followed_by
-            a_get("users/self/followed-by.#{format}").
-              with(:query => {:access_token => @client.access_token}).
-              should have_been_made
+            expect(a_get("users/self/followed-by.#{format}").
+              with(:query => {:access_token => @client.access_token})).
+              to have_been_made
           end
         end
       end
@@ -164,16 +164,18 @@ describe Instagram::Client do
 
         it "should get the correct resource" do
           @client.user_media_feed
-          a_get("users/self/feed.#{format}").
-            with(:query => {:access_token => @client.access_token}).
-            should have_been_made
+          expect(a_get("users/self/feed.#{format}").
+            with(:query => {:access_token => @client.access_token})).
+            to have_been_made
         end
 
         context Instagram::Response do
           let(:user_media_feed_response){ @client.user_media_feed }
           subject{ user_media_feed_response }
 
-          it{ should be_an_instance_of(Array) }
+          # it{ should be_an_instance_of(Array) }
+          it{ should be_an_instance_of(Hashie::Array) }
+
           it{ should be_a_kind_of(Instagram::Response) }
           it{ should respond_to(:pagination) }
           it{ should respond_to(:meta) }
@@ -181,14 +183,16 @@ describe Instagram::Client do
           context '.pagination' do
             subject{ user_media_feed_response.pagination }
 
-            it{ should be_an_instance_of(Hashie::Mash) }
+            # it{ should be_an_instance_of(Hashie::Mash) }
+            it{ should be_an_instance_of(Instagram::HashieWrapper) }
             its(:next_max_id){ should == '22063131' }
           end
 
           context '.meta' do
             subject{ user_media_feed_response.meta }
 
-            it{ should be_an_instance_of(Hashie::Mash) }
+            # it{ should be_an_instance_of(Hashie::Mash) }
+            it{ should be_an_instance_of(Instagram::HashieWrapper) }
             its(:code){ should == 200 }
           end
         end
@@ -204,9 +208,9 @@ describe Instagram::Client do
 
         it "should get the correct resource" do
           @client.user_liked_media
-          a_get("users/self/media/liked.#{format}").
-            with(:query => {:access_token => @client.access_token}).
-            should have_been_made
+          expect(a_get("users/self/media/liked.#{format}").
+            with(:query => {:access_token => @client.access_token})).
+            to have_been_made
         end
       end
       
@@ -222,15 +226,15 @@ describe Instagram::Client do
 
           it "should get the correct resource" do
             @client.user_recent_media(4)
-            a_get("users/4/media/recent.#{format}").
-              with(:query => {:access_token => @client.access_token}).
-              should have_been_made
+            expect(a_get("users/4/media/recent.#{format}").
+              with(:query => {:access_token => @client.access_token})).
+              to have_been_made
           end
 
           it "should return a list of recent media items for the given user" do
             recent_media = @client.user_recent_media(4)
-            recent_media.should be_a Array
-            recent_media.first.user.username.should == "shayne"
+            expect(recent_media).to be_a Array
+            expect(recent_media.first.user.username).to eq("shayne")
           end
         end
 
@@ -244,9 +248,9 @@ describe Instagram::Client do
 
           it "should get the correct resource" do
             @client.user_recent_media
-            a_get("users/self/media/recent.#{format}").
-              with(:query => {:access_token => @client.access_token}).
-              should have_been_made
+            expect(a_get("users/self/media/recent.#{format}").
+              with(:query => {:access_token => @client.access_token})).
+              to have_been_made
           end
         end
       end
@@ -261,15 +265,15 @@ describe Instagram::Client do
 
         it "should get the correct resource" do
           @client.user_requested_by
-          a_get("users/self/requested-by.#{format}").
-            with(:query => {:access_token => @client.access_token}).
-            should have_been_made
+          expect(a_get("users/self/requested-by.#{format}").
+            with(:query => {:access_token => @client.access_token})).
+            to have_been_made
         end
 
         it "should return a list of users awaiting approval" do
           users = @client.user_requested_by
-          users.should be_a Array
-          users.first.username.should == "shayne"
+          expect(users).to be_a Array
+          expect(users.first.username).to eq("shayne")
         end
       end
       
@@ -283,14 +287,14 @@ describe Instagram::Client do
         
         it "should get the correct resource" do
           @client.user_relationship(4)
-          a_get("users/4/relationship.#{format}").
-            with(:query => {:access_token => @client.access_token}).
-            should have_been_made
+          expect(a_get("users/4/relationship.#{format}").
+            with(:query => {:access_token => @client.access_token})).
+            to have_been_made
         end
         
         it "should return a relationship status response" do
           status = @client.user_relationship(4)
-          status.incoming_status.should == "requested_by"
+          expect(status.incoming_status).to eq("requested_by")
         end
       end
       
@@ -304,14 +308,14 @@ describe Instagram::Client do
         
         it "should get the correct resource" do
           @client.follow_user(4)
-          a_post("users/4/relationship.#{format}").
-            with(:body => {:action => "follow", :access_token => @client.access_token}).
-            should have_been_made
+          expect(a_post("users/4/relationship.#{format}").
+            with(:body => {:action => "follow", :access_token => @client.access_token})).
+            to have_been_made
         end
         
         it "should return a relationship status response" do
           status = @client.follow_user(4)
-          status.outgoing_status.should == "requested"
+          expect(status.outgoing_status).to eq("requested")
         end
       end
       
@@ -325,14 +329,14 @@ describe Instagram::Client do
         
         it "should get the correct resource" do
           @client.unfollow_user(4)
-          a_post("users/4/relationship.#{format}").
-            with(:body => {:action => "unfollow", :access_token => @client.access_token}).
-            should have_been_made
+          expect(a_post("users/4/relationship.#{format}").
+            with(:body => {:action => "unfollow", :access_token => @client.access_token})).
+            to have_been_made
         end
         
         it "should return a relationship status response" do
           status = @client.unfollow_user(4)
-          status.outgoing_status.should == "none"
+          expect(status.outgoing_status).to eq("none")
         end
       end
       
@@ -346,14 +350,14 @@ describe Instagram::Client do
         
         it "should get the correct resource" do
           @client.block_user(4)
-          a_post("users/4/relationship.#{format}").
-            with(:body => {:action => "block", :access_token => @client.access_token}).
-            should have_been_made
+          expect(a_post("users/4/relationship.#{format}").
+            with(:body => {:action => "block", :access_token => @client.access_token})).
+            to have_been_made
         end
         
         it "should return a relationship status response" do
           status = @client.block_user(4)
-          status.outgoing_status.should == "none"
+          expect(status.outgoing_status).to eq("none")
         end
       end
       
@@ -367,14 +371,14 @@ describe Instagram::Client do
         
         it "should get the correct resource" do
           @client.unblock_user(4)
-          a_post("users/4/relationship.#{format}").
-            with(:body => {:action => "unblock", :access_token => @client.access_token}).
-            should have_been_made
+          expect(a_post("users/4/relationship.#{format}").
+            with(:body => {:action => "unblock", :access_token => @client.access_token})).
+            to have_been_made
         end
         
         it "should return a relationship status response" do
           status = @client.unblock_user(4)
-          status.outgoing_status.should == "none"
+          expect(status.outgoing_status).to eq("none")
         end
       end
       
@@ -388,14 +392,14 @@ describe Instagram::Client do
         
         it "should get the correct resource" do
           @client.approve_user(4)
-          a_post("users/4/relationship.#{format}").
-            with(:body => {:action => "approve", :access_token => @client.access_token}).
-            should have_been_made
+          expect(a_post("users/4/relationship.#{format}").
+            with(:body => {:action => "approve", :access_token => @client.access_token})).
+            to have_been_made
         end
         
         it "should return a relationship status response" do
           status = @client.approve_user(4)
-          status.outgoing_status.should == "follows"
+          expect(status.outgoing_status).to eq("follows")
         end
       end
       
@@ -409,14 +413,14 @@ describe Instagram::Client do
         
         it "should get the correct resource" do
           @client.deny_user(4)
-          a_post("users/4/relationship.#{format}").
-            with(:body => {:action => "deny", :access_token => @client.access_token}).
-            should have_been_made
+          expect(a_post("users/4/relationship.#{format}").
+            with(:body => {:action => "deny", :access_token => @client.access_token})).
+            to have_been_made
         end
         
         it "should return a relationship status response" do
           status = @client.deny_user(4)
-          status.outgoing_status.should == "none"
+          expect(status.outgoing_status).to eq("none")
         end
       end
     end
