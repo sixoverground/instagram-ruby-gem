@@ -1,6 +1,6 @@
 - - -
 
-**_This project is not actively maintained. Proceed at your own risk!_**
+**_Instagram API for Ruby, used in Link My Photos_**
 
 - - - 
 
