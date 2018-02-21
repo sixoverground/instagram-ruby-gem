@@ -74,7 +74,8 @@ module Instagram
       params.sort.map do |key, val|
         sig += '|%s=%s' % [key, val]
       end
-      digest = OpenSSL::Digest::Digest.new('sha256')
+      # digest = OpenSSL::Digest::Digest.new('sha256')
+      digest = OpenSSL::Digest.new('sha256')
       return OpenSSL::HMAC.hexdigest(digest, secret, sig)
     end
 
